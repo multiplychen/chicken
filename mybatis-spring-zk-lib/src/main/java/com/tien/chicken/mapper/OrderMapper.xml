@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?> <!DOCTYPE mapper
+		PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+		"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.tien.chicken.mapper.OrderMapper">
+
+	<resultMap id="orderDetailResult" type="OrderDetail">
+		<result property="order.orderId" column="order_id" />
+		<result property="order.orderDate" column="order_date" />
+		<result property="product.prodId" column="prod_id" />
+		<result property="unitQty" column="unit_qty" />
+		<result property="product.prodName" column="prod_name" />
+		<result property="quantity" column="quantity" />
+		<result property="quantityTw" column="quantity_tw" />
+		<result property="unitPrice" column="unit_price" />
+		<result property="amount" column="amount" />
+	</resultMap>
+
+	<resultMap id="orderResult" type="Order">
+		<result property="orderId" column="order_id" />
+		<result property="customer.custId" column="cust_id" />
+		<result property="customer.custName" column="cust_name" />
+		<result property="orderDate" column="order_date" />
+		<result property="orderStat" column="order_stat" />
+		<result property="total" column="total" />
+		<result property="comment" column="comment" />
+	</resultMap>
+
+	<sql id="columns">
+		odd.order_id,
+		od.order_date,
+		prod.prod_id,
+		odd.unit_qty,
+		prod.prod_name,
+		odd.quantity,
+		ROUND(odd.quantity/prod.div_val,2) as quantity_tw,
+		odd.unit_price,
+		ROUND(odd.quantity/prod.div_val*odd.unit_price) as amount
+	</sql>
+
+	<select id="fetchOderDetailsByOrderId" resultMap="orderDetailResult">
+		SELECT
+		<include refid="columns"/>
+		FROM orderdetail odd
+		JOIN orders od on od.order_id = odd.order_id
+		JOIN product prod on
+		prod.prod_id = odd.prod_id
+		WHERE od.order_id = #{orderId}
+	</select>
+
+	<select id="fetchOderDetailsByDateRange" resultMap="orderDetailResult">
+		SELECT
+		<include refid="columns"/>
+		FROM orderdetail odd
+		JOIN orders od on od.order_id = odd.order_id
+		JOIN product prod on
+		prod.prod_id = odd.prod_id
+		WHERE odd.order_date between #{startDate} and #{endDate}
+	</select>
+
+	<select id="fetchAll" resultMap="orderResult">
+		SELECT
+		order_id,
+		order_date,
+		prod.prod_id,
+		odd.unit_qty,
+		prod.prod_name,
+		odd.quantity,
+		ROUND(odd.quantity/prod.div_val,2) as quantity_tw,
+		odd.unit_price,
+		ROUND(odd.quantity/prod.div_val*odd.unit_price) as amount
+		FROM order
+	</select>
+	<!-- NOTE in real life your employee single result would probably contain 
+		more columns than the one used for your display list above. for this demo 
+		the queries are basically the same though. I kept them separate since in 
+		real life this one would be more complete -->
+
+	<select id="fetchOrder" resultMap="orderResult">
+		SELECT
+		od.order_id,
+		od.cust_id,
+		od.order_date,
+		od.order_stat,
+		od.comment
+		FROM orders od
+		WHERE od.cust_id = #{custId}
+		AND od.order_date = #{orderDate}
+	</select>
+
+	<!-- NOTE in real life your employee single result would probably contain 
+		more columns than the one used for your display list above. for this demo 
+		the queries are basically the same though. I kept them separate since in 
+		real life this one would be more complete -->
+	<select id="fetch" resultMap="orderDetailResult">
+		SELECT
+		cust_id,
+		cust_name,
+		tel_no,
+		phone_no,
+		comment
+		FROM customer
+		WHERE cust_id = #{custId}
+	</select>
+
+	<update id="updateOrder" parameterType="Order">
+		UPDATE orders
+		SET
+		cust_id = #{customer.custId},
+		order_date = #{orderDate},
+		order_stat = #{orderStat},
+		comment = #{comment}
+		WHERE order_id = #{orderId}
+	</update>
+
+	<update id="updateOrderDetail" parameterType="OrderDetail">
+		UPDATE orderdetail
+		SET
+		quantity = #{quantity},
+		unit_price = #{unitPrice},
+		unit_qty = #{unitQty}
+		WHERE order_id = #{order.orderId} and prod_id = #{product.prodId}
+	</update>
+
+	<insert id="insertOrder" parameterType="Order" useGeneratedKeys="true"
+		keyProperty="orderId">
+		INSERT INTO orders ( cust_id, order_date, order_stat, comment )
+		VALUES ( #{customer.custId}, #{orderDate}, "A", #{comment} )
+	</insert>
+
+	<insert id="insertOrderDetail" parameterType="OrderDetail">
+		INSERT INTO orderdetail ( order_id, prod_id, unit_qty)
+		VALUES ( #{order.orderId}, #{product.prodId}, #{unitQty} )
+	</insert>
+
+	<!-- for oracle you're insert with a sequence your insert mapping would 
+		look like: <insert id="insertEmployee" parameterType="Employee"> <selectKey 
+		keyProperty="id" resultType="long" order="BEFORE"> select EMPLOYEE_SEQ.nextval 
+		from dual </selectKey> INSERT INTO employee ( id, firstname, lastname, age, 
+		departmentid ) VALUES ( #{id}, #{firstName}, #{lastName}, #{age}, #{department.id} 
+		) </insert> -->
+
+	<delete id="delete" parameterType="java.lang.Integer">
+		DELETE FROM customer WHERE cust_id = #{value}
+	</delete>
+
+
+</mapper>

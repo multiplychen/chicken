@@ -1,0 +1,35 @@
+<zk>
+	<window id="orderPage" border="none" width="100%"
+		apply="org.zkoss.bind.BindComposer"
+		viewModel="@id('vm1') @init('com.tien.chicken.vm.PrintOrderVM')">
+		<groupbox width="99%" height="550px">
+			<caption label="列印訂單" style="text-align: left;"></caption>
+			<grid>
+				<columns>
+					<column hflex="1" />
+					<column hflex="2" />
+					<column hflex="1" />
+					<column hflex="2" />
+					<column hflex="1" />
+					<column hflex="2" />
+				</columns>
+				<rows>
+					<row>
+						<cell colspan="1" align="right">
+							<label value="列印起日:" />
+						</cell>
+						<datebox value="@bind(vm1.startDate)"
+							format="yyyyMMdd" />
+						<cell colspan="1" align="right">
+							<label value="列印迄日:" />
+						</cell>
+						<datebox value="@bind(vm1.endDate)"
+							format="yyyyMMdd" />
+						<button label="產出"
+							onClick="@command('printOrder1')" style="font-size:12px;" />
+					</row>
+				</rows>
+			</grid>
+		</groupbox>
+	</window>
+</zk>

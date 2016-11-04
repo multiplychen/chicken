@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?page title="Employee Maintenance" contentType="text/html;charset=UTF-8"?>
+<zk>
+<window id="customerPage" border="none" width="100%" apply="org.zkoss.bind.BindComposer"
+	viewModel="@id('vm') @init('com.tien.chicken.vm.CustomerVM')">
+	
+	<panel width="99%" border="normal"  height="400px">
+		<caption label="客戶資料 (click to edit/view)" style="text-align: left;">
+			 <button label="新增" onClick="@command('createCustomer')" style="font-size:12px;" />
+		</caption>
+		<panelchildren>
+			<vlayout style="margin:10px;">
+			
+				<listbox id="customersList" mold="paging" pageSize="8"
+						 model="@load(vm.customers)"
+						 selectedItem="@bind(vm.customer)"
+						 >
+ 					<listhead>
+						<listheader label="客戶名稱" align="left"   width="130px"  sort="auto(custName)" />
+						<listheader label="電話" align="left"   width="130px"  sort="auto(telNo)" />
+						<listheader label="手機" align="left" width="130px"  sort="auto(phoneNo)" />
+						<listheader label="備註" align="left"  width="160px"  sort="auto(comment)" />
+					</listhead>
+					<template name="model" var="item">
+						<listitem onClick="@command('editCustomer')">
+							<listcell label="@load(item.custName)"/>
+							<listcell label="@load(item.telNo)"/>
+							<listcell label="@load(item.phoneNo)"/>
+							<listcell label="@load(item.comment)"/>
+						</listitem>
+					</template>
+				</listbox>
+				
+			</vlayout>
+			<vlayout style="margin:10px;">
+				<grid id="customersGrid" mold="paging" pageSize="8"
+						 model="@load(vm.customers) @template('model1')" 
+						 >
+ 					<columns>
+ 						 <column width="100px" label="客戶名稱"/>
+ 						  <column width="100px" label="電話"/>
+ 						   <column width="100px" label="手機"/>
+ 						    <column width="100px" label="備註"/>
+ 					</columns>
+					<template name="model" var="item">
+						<row>
+							<textbox inplace="true"
+                        		value="@bind(item.custName)" width="99%" />
+							<textbox inplace="true"
+                        		value="@bind(item.telNo)" width="99%" />
+							<textbox inplace="true"
+                        		value="@bind(item.phoneNo)" width="99%" />
+                        	<textbox inplace="true"
+                        		value="@bind(item.comment)" width="99%" />
+						</row>
+					</template>
+					<template name="model1" var="item">
+						<row>
+							<textbox inplace="false"
+                        		value="@bind(item.custName)" width="99%" />
+							<textbox inplace="true"
+                        		value="@bind(item.telNo)" width="99%" />
+							<textbox inplace="true"
+                        		value="@bind(item.phoneNo)" width="99%" />
+                        	<textbox inplace="true"
+                        		value="@bind(item.comment)" width="99%" />
+						</row>
+					</template>	
+				</grid>
+			</vlayout>
+		</panelchildren>
+	</panel>
+	<groupbox>
+	
+	
+	<panel visible="@load(!vm.hideForm)" height="300px" style="padding-top:10px;">
+		<caption label="@load(vm.customer.custId ne null ? '修改客戶資料':'新增客戶')" style="text-align: left;"/>
+		<panelchildren>
+			<vlayout style="padding:5px;"
+					 form="@id('cust')
+					@load(vm.customer)
+					@save(vm.customer, before='update'),
+					@save(vm.customer, before='add')">
+					<vlayout>
+						<grid>
+							<columns>
+								<column align="right" width="120px"/>
+								<column/>
+							</columns>
+							<rows>
+								<row visible="@load(vm.customer.custId ne null)">
+									<cell sclass="row-title">客戶編號:</cell>
+									<cell><textbox disabled="true" value="@bind(cust.custId)" style="width:40px"/></cell>
+								</row>
+								<row>
+									<cell sclass="row-title">客戶名稱:</cell>
+									<cell><textbox value="@bind(cust.custName)" constraint="no empty: 請輸入客戶名稱" style="width:400px"/></cell>
+								</row>
+								<row>
+									<cell sclass="row-title">電話:</cell>
+									<cell><textbox value="@bind(cust.telNo)" constraint="no empty: 請輸入電話" style="width:400px"/></cell>
+								</row>
+								<row>
+									<cell sclass="row-title">手機:</cell>
+									<cell><textbox value="@bind(cust.phoneNo)" constraint="no empty: 請輸入手機" style="width:400px"/></cell>
+								</row>
+								<row>
+									<cell sclass="row-title">備註:</cell>
+									<cell><textbox value="@bind(cust.comment)" constraint="no empty: 請輸入手機" style="width:400px"/></cell>
+								</row>
+							</rows>
+						</grid>
+					</vlayout>
+					<vlayout>
+						<hlayout>
+							<button label="Update" onClick="@command('update')" visible="@load(vm.customer.custId ne null)"/>
+							<button label="Delete" onClick="@command('delete')" visible="@load(vm.customer.custId ne null)"/>
+							<button label="Add" onClick="@command('add')" visible="@load(vm.customer.custId eq null)"/>
+							<button label="Cancel" onClick="@command('cancel')"/>
+						</hlayout>
+					</vlayout>
+				</vlayout>
+		</panelchildren>
+	</panel>
+	</groupbox>
+</window>
+</zk>

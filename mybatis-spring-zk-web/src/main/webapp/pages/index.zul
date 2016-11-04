@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?page title="Employee Maintenance" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<window id="employeesPage" border="none" width="100%"
+		apply="org.zkoss.bind.BindComposer"
+		viewModel="@id('vm') @init('net.learntechnology.index.viewmodel.IndexVM')">
+		<panel width="99%" border="normal" height="350px">
+			<caption label="Employees (click to edit/view)"
+				style="text-align: left;">
+				<button label="Employees"
+					onClick="@command('goToEmployeePage')" style="font-size:12px;" />
+			</caption>
+
+			<panelchildren>
+				<vlayout style="margin:10px;">
+					<grid>
+						<columns>
+							<column align="right" width="120px" />
+							<column />
+						</columns>
+						<rows>
+							<row>
+								<cell>
+									<button label="Employees"
+										onClick="@command('goToEmployeePage')"
+										style="font-size:12px;" />
+									<toolbarbutton label="link" href="http://localhost:8081/mybatis-spring-zk-web/customer/customer.zul"> </toolbarbutton>
+								</cell>
+							</row>
+						</rows>
+					</grid>
+				</vlayout>
+			</panelchildren>
+		</panel>
+	</window>
+</zk>

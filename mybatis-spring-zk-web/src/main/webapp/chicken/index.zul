@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?page title="Employee Maintenance" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<div apply="org.zkoss.bind.BindComposer"
+		viewModel="@id('vm') @init('com.tien.chicken.vm.IndexVM')">
+		<borderlayout height="810px">
+			<north>
+				<menubar autodrop="true" width="100%">
+					<menuitem label="訂單" onClick="@command('changePage',pageUrl='order.zul')"/>
+					<menuitem label="列印訂單" onClick="@command('changePage',pageUrl='printOrder.zul')"/>
+					<menuitem label="客戶" onClick="@command('changePage',pageUrl='customer.zul')"/>
+					<menuitem label="廠商" onClick="@command('changePage',pageUrl='order.zul')"/>
+					<menuitem label="商品" onClick="@command('changePage',pageUrl='order.zul')"/>
+					<menuitem label="損益表" onClick="@command('changePage',pageUrl='order.zul')"/>
+<!-- 					<menu label="search"> -->
+<!-- 						<menupopup> -->
+<!-- 							<menuitem label="xxeewfwefxx" -->
+<!-- 								checked="false" checkmark="false" onClick="@command('changePage',pageUrl='customer.zul')" /> -->
+<!-- 						</menupopup> -->
+<!-- 					</menu> -->
+				</menubar>
+			</north>
+			<center id="displayPage" binder="@load(vm.displayPage)">
+				<include src="@load(vm.displayPage)"/>
+			</center>
+		</borderlayout>
+	</div>
+</zk>

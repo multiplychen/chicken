@@ -1,0 +1,149 @@
+<zk>
+	<window id="orderPage" border="none" width="100%"
+		apply="org.zkoss.bind.BindComposer"
+		viewModel="@id('orderVm') @init('com.tien.chicken.vm.OrderVM')">
+		<groupbox width="99%" height="550px">
+			<caption label="訂單管理" style="text-align: left;"></caption>
+			<grid>
+				<columns>
+					<column hflex="1" />
+					<column hflex="2" />
+					<column hflex="1" />
+					<column hflex="2" />
+					<column hflex="1" />
+					<column hflex="2" />
+				</columns>
+				<rows>
+					<row>
+						<cell colspan="1" align="right">
+							<label value="客戶:" />
+						</cell>
+						<combobox id="customers" width="150px"
+							model="@load(orderVm.customersModel)"
+							selectedItem="@bind(orderVm.customer)"
+							onSelect="@command('fetchOrderDetails')">
+							<template name="model">
+								<comboitem label="${each.custName}" />
+							</template>
+						</combobox>
+						<cell colspan="1" align="right">
+							<label value="訂單日期:" />
+						</cell>
+						<datebox value="@bind(orderVm.orderDate)"
+							format="yyyyMMdd" onChange="@command('fetchOrderDetails')" />
+						<button label="新增"
+							onClick="@command('createOrder')" style="font-size:12px;" />
+					</row>
+					<row>
+						<cell colspan="1" align="right">
+							<label value="單號:" />
+						</cell>
+						<cell colspan="1">
+							<label value="@load(orderVm.order.orderId)" />
+						</cell>
+						<cell colspan="1" align="right">
+							<label value="訂單狀態:" />
+						</cell>
+						<cell colspan="3">
+							<label value="@load(orderVm.order.orderStat)" />
+						</cell>
+					</row>
+					<row>
+						<cell colspan="6">
+							<label value="訂單明細:" />
+						</cell>
+					</row>
+					<row>
+						<cell colspan="6"
+							visible="${orderVm.orderDetails == null ? 'false' : 'true'}">
+							<listbox id="orderDetailsGrid2"
+								mold="paging" pageSize="8"
+								model="@load(orderVm.orderDetails) @template('model')">
+								<listhead>
+									<listheader label="序號" hflex="min"
+										align="center" />
+									<listheader label="日期" hflex="min"
+										align="center" />
+									<listheader label="隻數" hflex="min"
+										align="center" sort="auto(unitQty)" />
+									<listheader label="品名" hflex="min"
+										align="center" sort="auto(product.prodName)" />
+									<listheader label="數量" hflex="min"
+										align="center" sort="auto(quantity)" />
+									<listheader label="台斤數量" hflex="min"
+										align="center" sort="auto(quantityTw)" />
+									<listheader label="單價" hflex="min"
+										align="center" sort="auto(unitPrice)" />
+									<listheader label="金額" hflex="min"
+										align="center" sort="auto(amount)" />
+									<listheader label="" hflex="min"
+										sclass="resultTitle" />
+								</listhead>
+								<template name="model" var="item">
+									<listitem>
+										<listcell>
+											<label
+												value="@load(forEachStatus.index + 1)" />
+										</listcell>
+										<listcell sclass="resultDate">
+											<datebox inplace="true"
+												format="yyyy/MM/dd" value="@bind(item.order.orderDate)"
+												width="90px" />
+										</listcell>
+										<listcell>
+											<intbox inplace="true"
+												value="@bind(item.unitQty)" width="50px" />
+										</listcell>
+										<listcell>
+											<combobox width="150px" model="@load(orderVm.productsModel)"
+												selectedItem="@bind(item.product)" inplace="true" autodrop="true">
+												<template name="model" var="p">
+													<comboitem label="@load(p.prodName)"/>
+												</template>
+											</combobox>
+<!-- 											<textbox inplace="true" -->
+<!-- 												value="@bind(item.product.prodName)" width="50px" /> -->
+										</listcell>
+										<listcell>
+											<decimalbox format="###.##"
+												inplace="true" value="@bind(item.quantity)" width="50px" />
+										</listcell>
+										<listcell>
+											<decimalbox format="###.##"
+												disabled="true" style="color:black !important;"
+												value="@bind(item.quantityTw)" width="50px" />
+										</listcell>
+										<listcell>
+											<intbox inplace="true"
+												value="@bind(item.unitPrice)" width="50px" />
+										</listcell>
+										<listcell>
+											<intbox
+												style="color:black !important;" disabled="true"
+												value="@bind(each.amount)" width="50px" />
+										</listcell>
+									</listitem>
+								</template>
+								<template name="model1" var="item">
+									<row>
+										<textbox inplace="false"
+											value="@bind(item.custName)" width="99%" />
+										<textbox inplace="true"
+											value="@bind(item.telNo)" width="99%" />
+										<textbox inplace="true"
+											value="@bind(item.phoneNo)" width="99%" />
+										<textbox inplace="true"
+											value="@bind(item.comment)" width="99%" />
+									</row>
+								</template>
+							</listbox>
+							<paging></paging>
+							<button label="修改"
+								onClick="@command('editOrder')" style="font-size:12px;" />
+						</cell>
+					</row>
+				</rows>
+			</grid>
+		</groupbox>
+	</window>
+</zk>
